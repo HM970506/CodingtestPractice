@@ -26,19 +26,27 @@ const test="./input.txt"
 const real="/dev/stdin"
 
 
-function recursion(n, m, now, layer, string, array, answer){
+function recursion(n, m, layer, string, check, array, answer){
   if(layer>=m) {answer.push(string.join(" ")); return;}
-  for(let i=now; i<n; i++){
+  for(let i=0; i<n; i++){
+    if(check[i]){
+      check[i]=false;
       string.push(array[i]);
-      recursion(n, m,i, layer+1, [...string], array, answer);
+      recursion(n, m, layer+1, [...string], [...check], array, answer);
       string.pop();
+      check[i]=true;
+    }
   }
 }
 const x=inputs(test);
-const array=Array.from(new Set(x[1])).sort((a,b)=>{if(parseInt(a)>parseInt(b))return 1; else return -1});
+const array=x[1].sort((a,b)=>{if(parseInt(a)>parseInt(b))return 1; else return -1});
 const answer=[];
+const check=[];
 
+for(let i=0; i<x[0][0]; i++){
+  check.push(true);
+}
 
-recursion(array.length, x[0][1], 0, 0, [], array, answer);
+recursion(array.length, x[0][1], 0, [], check, array, answer);
 
 console.log(Array.from(new Set(answer)).join("\n"));
