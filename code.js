@@ -25,17 +25,27 @@ function inputs(path){
 const test="./input.txt"
 const real="/dev/stdin"
 
-const answer=[];
 
-function recursion(n, m, layer,now, array){
-  if(layer>=m) {answer.push(array); return;}
-  for(let i=now; i<n; i++){
-    recursion(n, m, layer+1, i, array=="" ? array+(i+1): array+" "+(i+1));
+function recursion(n, m, layer, string, array, check, answer){
+  if(layer>=m) {answer.push(string.join(" ")); return;}
+  for(let i=0; i<n; i++){
+    if(check[i]){
+      check[i]=false;
+      string.push(array[i]);
+      recursion(n, m, layer+1, [...string], array, [...check], answer);
+      string.pop();
+    }
   }
 }
-const x=input(real);
+const x=inputs(real);
+const array=x[1].sort((a,b)=>{if(parseInt(a)>parseInt(b))return 1; else return -1});
+const check=[];
+const answer=[];
 
+for(let i=0; i<x[0][0]; i++){
+  check.push(true);
+}
 
-recursion(x[0], x[1], 0,0, "");
+recursion(x[0][0], x[0][1], 0, [], array, check, answer);
 
 console.log(answer.join("\n"));
