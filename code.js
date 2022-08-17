@@ -27,7 +27,9 @@ const real="/dev/stdin"
 
 
 function recursion(n, m, layer, string, array, check, answer){
-  if(layer>=m) {answer.push(string.join(" ")); return;}
+  if(layer>=m) {
+    if(!answer.includes(string.join(" "))) answer.push(string.join(" ")); 
+  return;}
   for(let i=0; i<n; i++){
     if(check[i]){
       check[i]=false;
