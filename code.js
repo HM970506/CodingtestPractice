@@ -27,15 +27,15 @@ const real="/dev/stdin"
 
 const answer=[];
 
-function recursion(n, m, layer, array){
+function recursion(n, m, layer,now, array){
   if(layer>=m) {answer.push(array); return;}
-  for(let i=0; i<n; i++){
-    recursion(n, m, layer+1, array=="" ? array+(i+1): array+" "+(i+1));
+  for(let i=now; i<n; i++){
+    recursion(n, m, layer+1, i, array=="" ? array+(i+1): array+" "+(i+1));
   }
 }
 const x=input(real);
 
 
-recursion(x[0], x[1], 0, "");
+recursion(x[0], x[1], 0,0, "");
 
 console.log(answer.join("\n"));
