@@ -25,28 +25,32 @@ function inputs(path){
 const test="./input.txt"
 const real="/dev/stdin"
 
-
-function recursion(n, m, layer, string, check, array, answer){
-  if(layer>=m) {answer.push(string.join(" ")); return;}
-  for(let i=0; i<n; i++){
-    if(check[i]){
-      check[i]=false;
-      string.push(array[i]);
-      recursion(n, m, layer+1, [...string], [...check], array, answer);
-      string.pop();
-      check[i]=true;
-    }
-  }
-}
 const x=inputs(test);
-const array=x[1].sort((a,b)=>{if(parseInt(a)>parseInt(b))return 1; else return -1});
-const answer=[];
+const n=parseInt(x[0][0]);
+const m=parseInt(x[0][1]);
+const array=x[1].map(y=>{return parseInt(y)});
 const check=[];
+const answer=[];
 
-for(let i=0; i<x[0][0]; i++){
+for(let i=0; i<n; i++){
   check.push(true);
 }
 
-recursion(array.length, x[0][1], 0, [], check, array, answer);
+function recursion(n, m, array, check, now, layer, nowarray, answer){
+  //console.log(check, now, layer, answer.size);
+  if(layer!=0 && now==m) answer.push(nowarray.join(" "));
+  if(layer>=n) return;
 
-console.log(Array.from(new Set(answer)).join("\n"));
+  for(let i=0; i<n; i++){
+    if(check[i]){
+      check[i]=false;
+      nowarray.push(array[i]);
+      recursion(n, m, array, [...check], now+array[i], layer+1, [...nowarray], answer);
+      nowarray.pop();
+    }
+  }
+}
+
+recursion(n, m, array, [...check], 0, 0, [], answer);
+
+console.log(answer.length);
