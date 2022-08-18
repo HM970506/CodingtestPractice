@@ -27,30 +27,32 @@ const real="/dev/stdin"
 
 const x=inputs(test);
 const n=parseInt(x[0][0]);
-const m=parseInt(x[0][1]);
-const array=x[1].map(y=>{return parseInt(y)});
-const check=[];
-const answer=[];
+const time=[];
+const money=[];
 
-for(let i=0; i<n; i++){
-  check.push(true);
+for(let i=1; i<x.length; i++){
+  time.push(parseInt(x[i][0]));
+  money.push(parseInt(x[i][1]));
 }
 
-function recursion(n, m, array, check, now, layer, nowarray, answer){
-  //console.log(check, now, layer, answer.size);
-  if(layer!=0 && now==m) answer.push(nowarray.join(" "));
-  if(layer>=n) return;
+let max=0;
 
-  for(let i=0; i<n; i++){
-    if(check[i]){
-      check[i]=false;
-      nowarray.push(array[i]);
-      recursion(n, m, array, [...check], now+array[i], layer+1, [...nowarray], answer);
-      nowarray.pop();
+function recursion(n, time, money, index, total, test){
+  //console.log( test, index);
+  if(index>n) return;
+  if(total>max) max=total;
+
+  for(let i=index; i<n; i++){
+    if(time[i]>0 && index+time[i]<=n+1){
+      const nowTime=[...time];
+      test.push([nowTime[i], money[i]]);
+      nowTime[i]=0;
+      recursion(n, nowTime, money, i+time[i],total+money[i], [...test]);
+      test.pop();
+      }
     }
-  }
 }
 
-recursion(n, m, array, [...check], 0, 0, [], answer);
+recursion(n,time, money, 0,0, []);
 
-console.log(answer.length);
+console.log(max);
