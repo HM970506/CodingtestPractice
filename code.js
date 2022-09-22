@@ -27,43 +27,61 @@ const test="./input.txt"
 const real="/dev/stdin"
 
 const inputNow=inputs(test);
-const n=parseInt(inputNow[0][0]);
-const map=[];
+const testCaseNum=inputNow.shift()[0];
 
+const maps=[];
 
-for(let i=1; i<=n; i++){
-  map.push(inputNow[i][0].split(""));
+while(inputNow.length){
+   const now= inputNow.shift();
+   const nowX=parseInt(now[0]);
+   const nowY=parseInt(now[1]);
+   const node=parseInt(now[2]);
+   const map=[];
+
+   for(let j=0; j<nowY; j++){
+    map.push(new Array(nowX).fill(0));
+   }
+
+   for(let j=0; j<node; j++){
+      const nowNode=inputNow.shift();
+      map[nowNode[1]][nowNode[0]]=1;
+   }
+   maps.push(map);
+
 }
 
-const direction=[[0,1],[1,0],[-1,0],[0,-1]];
-function DFS(y, x, floor){
-  let total=0;
-  for(let i=0; i<4; i++){
-    const nowY=y+direction[i][0];
-    const nowX=x+direction[i][1];
+const direction=[[1, 0],[0, 1],[-1, 0],[0, -1]];
+const answer=[];
 
-    if(nowY>=0 && nowY<n && nowX>=0 && nowX<n&& map[nowY][nowX]=="1"){
-      map[nowY][nowX]="0";
-      total+=DFS(nowY, nowX, floor+1);
+for(const map of maps){
+  let cnt=0;
+  for(let i=0; i<map.length; i++){
+    for(let j=0; j<map[0].length; j++){
+      if(map[i][j]==1) {
+        DFS(i, j, map);
+        cnt++;
+      }
     }
   }
-  if(total==0) return 1;
-  else return total+1;
+  answer.push(cnt);
 }
 
-const cnt=[];
 
-for(let i=0; i<n; i++){
-  for(let j=0; j<n; j++){
-    if(map[i][j]=='1'){
-      const dfs=DFS(i, j, 0);
-      cnt.push(dfs==1 ? dfs : dfs-1);
+function DFS(y, x, map){
+  //console.log(map);
+  for(let k=0; k<4; k++){
+    const nowY=direction[k][0]+y;
+    const nowX=direction[k][1]+x;
+    //console.log(nowY, nowX);
+    if(nowY>=0 && nowY<map.length && nowX>=0 && nowX<map[0].length && map[nowY][nowX]==1){
+      map[nowY][nowX]=0;
+      //console.log(map);
+      DFS(nowY, nowX, map);
     }
   }
+
 }
 
-cnt.sort((a,b)=>{if(a>b)return 1; else return -1});
-console.log(cnt.length);
-for(let i=0; i<cnt.length; i++){
-  console.log(cnt[i]);
+for(const ans of answer){
+console.log(ans);
 }
