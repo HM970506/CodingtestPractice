@@ -1,3 +1,4 @@
+const { FORMERR } = require('dns');
 
 function input(path){
   //한 줄인 경우
@@ -26,60 +27,43 @@ const test="./input.txt"
 const real="/dev/stdin"
 
 const inputNow=inputs(test);
-const start=inputNow[0][2];
+const n=parseInt(inputNow[0][0]);
 const map=[];
-const check=new Array(parseInt(inputNow[0][0])).fill(true);
-for(let i=0; i<inputNow[0][0]; i++){
-  map.push(new Array(parseInt(inputNow[0][0])).fill(0));
+
+
+for(let i=1; i<=n; i++){
+  map.push(inputNow[i][0].split(""));
 }
 
+const direction=[[0,1],[1,0],[-1,0],[0,-1]];
+function DFS(y, x, floor){
+  let total=0;
+  for(let i=0; i<4; i++){
+    const nowY=y+direction[i][0];
+    const nowX=x+direction[i][1];
 
-
-for(let i=1; i<inputNow.length; i++){
-   map[inputNow[i][0]-1][inputNow[i][1]-1]=1;
-   map[inputNow[i][1]-1][inputNow[i][0]-1]=1;
-}
-
-
-function DFS(now, check, floor){
-  dfsArray.push(now+1);
-  if(check.length==floor) return;
-
-  for(let i=0; i<map.length; i++){
-    if(map[now][i]==1 && check[i]){
-      check[i]=false;
-      DFS(i, check, floor+1);
+    if(nowY>=0 && nowY<n && nowX>=0 && nowX<n&& map[nowY][nowX]=="1"){
+      map[nowY][nowX]="0";
+      total+=DFS(nowY, nowX, floor+1);
     }
   }
-
+  if(total==0) return 1;
+  else return total+1;
 }
 
-const dfsArray=[];
-const nowCheck=[...check];
-nowCheck[start-1]=false;
-DFS(start-1, [...nowCheck], 0);
+const cnt=[];
 
-function BFS(queue, check, floor){
-  if(check.length==floor) return;
-
-  const Nowqueue=[];
-  while(queue.length){
-    const now=queue.shift();
-    for(let i=0; i<map.length; i++){
-      if(map[now][i]==1 && check[i]){
-        check[i]=false;
-        bfsArray.push(i+1);
-        Nowqueue.push(i);
-      }
+for(let i=0; i<n; i++){
+  for(let j=0; j<n; j++){
+    if(map[i][j]=='1'){
+      const dfs=DFS(i, j, 0);
+      cnt.push(dfs==1 ? dfs : dfs-1);
     }
   }
-
-  BFS(Nowqueue, check, floor+1);
 }
 
-const bfsArray=[parseInt(start)];
-BFS([start-1], [...nowCheck], 0);
-
-
-console.log(dfsArray.join(" "))
-console.log(bfsArray.join(" "));
+cnt.sort((a,b)=>{if(a>b)return 1; else return -1});
+console.log(cnt.length);
+for(let i=0; i<cnt.length; i++){
+  console.log(cnt[i]);
+}
