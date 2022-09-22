@@ -25,34 +25,61 @@ function inputs(path){
 const test="./input.txt"
 const real="/dev/stdin"
 
-const x=inputs(test);
-const n=parseInt(x[0][0]);
-const time=[];
-const money=[];
-
-for(let i=1; i<x.length; i++){
-  time.push(parseInt(x[i][0]));
-  money.push(parseInt(x[i][1]));
+const inputNow=inputs(test);
+const start=inputNow[0][2];
+const map=[];
+const check=new Array(parseInt(inputNow[0][0])).fill(true);
+for(let i=0; i<inputNow[0][0]; i++){
+  map.push(new Array(parseInt(inputNow[0][0])).fill(0));
 }
 
-let max=0;
 
-function recursion(n, time, money, index, total, test){
-  //console.log( test, index);
-  if(index>n) return;
-  if(total>max) max=total;
 
-  for(let i=index; i<n; i++){
-    if(time[i]>0 && index+time[i]<=n+1){
-      const nowTime=[...time];
-      test.push([nowTime[i], money[i]]);
-      nowTime[i]=0;
-      recursion(n, nowTime, money, i+time[i],total+money[i], [...test]);
-      test.pop();
+for(let i=1; i<inputNow.length; i++){
+   map[inputNow[i][0]-1][inputNow[i][1]-1]=1;
+   map[inputNow[i][1]-1][inputNow[i][0]-1]=1;
+}
+
+
+function DFS(now, check, floor){
+  dfsArray.push(now+1);
+  if(check.length==floor) return;
+
+  for(let i=0; i<map.length; i++){
+    if(map[now][i]==1 && check[i]){
+      check[i]=false;
+      DFS(i, check, floor+1);
+    }
+  }
+
+}
+
+const dfsArray=[];
+const nowCheck=[...check];
+nowCheck[start-1]=false;
+DFS(start-1, [...nowCheck], 0);
+
+function BFS(queue, check, floor){
+  if(check.length==floor) return;
+
+  const Nowqueue=[];
+  while(queue.length){
+    const now=queue.shift();
+    for(let i=0; i<map.length; i++){
+      if(map[now][i]==1 && check[i]){
+        check[i]=false;
+        bfsArray.push(i+1);
+        Nowqueue.push(i);
       }
     }
+  }
+
+  BFS(Nowqueue, check, floor+1);
 }
 
-recursion(n,time, money, 0,0, []);
+const bfsArray=[parseInt(start)];
+BFS([start-1], [...nowCheck], 0);
 
-console.log(max);
+
+console.log(dfsArray.join(" "))
+console.log(bfsArray.join(" "));
